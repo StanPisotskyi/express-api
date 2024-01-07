@@ -29,4 +29,10 @@ const ArticleSchema = new mongoose.Schema({
     }
 });
 
+ArticleSchema.methods.toJSON = function() {
+    const obj = this.toObject();
+    delete obj.__v;
+    return obj;
+}
+
 module.exports = mongoose.model('articles', ArticleSchema);

@@ -22,31 +22,26 @@ router.get('/', async (req, res) => {
     const limit = 5;
     const offset = (page - 1) * limit;
 
-    const total = await Article.estimatedDocumentCount();
-    const articles = await Article.find({}).skip(offset).limit(limit).sort({
-        _id: (sort === 'asc') ? 1 : -1
-    });
-    res.header(200);
-    res.json({articles: articles, total: total});
+    const [total, articles] = await Promise.all([Article.estimatedDocumentCount(), Article.find({}).skip(offset).limit(limit).sort({_id: (sort === 'asc') ? 1 : -1})]);
+
+    res
+        .status(200)
+        .json({articles: articles, total: total});
 });
 
 router.get('/:id', async (req, res) => {
-    const id = req.params.id;
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        res.header(404);
-        res.json({article: null, error: 'Page is not found'});
-    } else {
-        const article = await Article.findById(id).exec();
-
-        if (!article) {
-            res.header(404);
-            res.json({article: null, error: 'Page is not found'});
-        } else {
-            res.header(200);
-            res.json({article: article, error: null});
-        }
-    }
+    await Article.findById(req.params.id)
+        .then((article) => {
+            res
+                .status(200)
+                .json({article: article, error: null});
+        })
+        .catch((error) => {
+            console.log(error);
+            res
+                .status(404)
+                .json({article: null, error: 'Page is not found'});
+        });
 });
 
 module.exports = router;

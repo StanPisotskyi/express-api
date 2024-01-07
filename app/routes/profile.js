@@ -6,17 +6,19 @@ router.get(
     '/',
     async (req, res, next) => {
         const _id = req.user._id;
-        const user = await UserModel.findOne({ _id });
-
-        res.json({
-            user: {
-                id: user._id,
-                firstName: user.firstName,
-                lastName: ('lastName' in user) ? user.lastName : null,
-                email: user.email,
-                createdAt: user.createdAt
-            }
-        })
+        await UserModel.findOne({ _id })
+            .then((user) => {
+                res
+                    .status(200)
+                    .json({
+                    user: user
+                });
+            }).catch((error) => {
+                console.log(error);
+                res
+                    .status(401)
+                    .json({error: 'Unauthorized'});
+            });
     }
 );
 

@@ -40,4 +40,11 @@ UserSchema.methods.isValidPassword = async function(password) {
     return await bcrypt.compare(password, user.password);
 }
 
+UserSchema.methods.toJSON = function() {
+    const obj = this.toObject();
+    delete obj.password;
+    delete obj.__v;
+    return obj;
+}
+
 module.exports = mongoose.model('users', UserSchema);
