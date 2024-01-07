@@ -83,6 +83,28 @@ router.put('/:id', async (req, res) => {
         });
 });
 
+router.delete('/:id', async (req, res) => {
+    const _id = req.params.id;
+    const author = req.user._id;
+
+    await Article.findOneAndDelete({_id: _id, author: author})
+        .then((article) => {
+            if (!article) {
+                throw new Error('Access denied');
+            }
+
+            res
+                .status(200)
+                .json({article: article, error: null, status: 'deleted'});
+        })
+        .catch((error) => {
+            console.log(error);
+            res
+                .status(404)
+                .json({article: null, error: 'Access denied', status: 'failed'});
+        });
+});
+
 function validate(title, description, text) {
     return new Promise((resolve, reject) => {
         resolve((title && description && text) ? 1: 0);

@@ -8,13 +8,7 @@ router.post(
     async (req, res, next) => {
         res.json({
             status: true,
-            user: {
-                id: req.user._id,
-                firstName: req.user.firstName,
-                lastName: ('lastName' in req.user) ? req.user.lastName : null,
-                email: req.user.email,
-                createdAt: req.user.createdAt
-            }
+            user: req.user
         });
     }
 );
