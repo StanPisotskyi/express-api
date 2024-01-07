@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
     const limit = 5;
     const offset = (page - 1) * limit;
 
-    const [total, articles] = await Promise.all([Article.estimatedDocumentCount(), Article.find({}).skip(offset).limit(limit).sort({_id: (sort === 'asc') ? 1 : -1})]);
+    const [total, articles] = await Promise.all([Article.estimatedDocumentCount(), Article.find({}).skip(offset).limit(limit).sort({_id: (sort === 'asc') ? 1 : -1}).populate('author')]);
 
     res
         .status(200)
@@ -30,7 +30,7 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
-    await Article.findById(req.params.id)
+    await Article.findById(req.params.id).populate('author')
         .then((article) => {
             res
                 .status(200)

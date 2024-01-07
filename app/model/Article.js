@@ -32,6 +32,12 @@ const ArticleSchema = new mongoose.Schema({
 ArticleSchema.methods.toJSON = function() {
     const obj = this.toObject();
     delete obj.__v;
+
+    if (typeof obj.author === 'object') {
+        delete obj.author.password;
+        delete obj.author.__v;
+    }
+
     return obj;
 }
 
